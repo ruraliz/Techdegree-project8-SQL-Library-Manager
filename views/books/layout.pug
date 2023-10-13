@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+html
+  head
+    title Books
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    h1 Books
+    p
+      a.button(href='/books/new') Create New Book
+
+
+    table
+      thead
+        tr
+          th Title
+          th Author
+          th Genre
+          th Year
+      tbody
+        block content

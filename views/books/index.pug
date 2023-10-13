@@ -1,0 +1,11 @@
+extends layout 
+
+block content
+    each book in books  
+        book   
+            tr  
+                td
+                    a(href='/books/' + book.id)= book.title
+                td= book.author
+                td= book.genre
+                td= book.year
