@@ -56,9 +56,7 @@ router.post("/search", asyncHandler(async (req, res) => {
 );
 
 //GET ROUTE '/search'
-//Displays results from database search.
-
-
+//Displays results from search.
 router.get("/search",asyncHandler(async (req, res) => {
     currentPage = req.query.page || currentPage;
     const books = await search();
@@ -67,6 +65,7 @@ router.get("/search",asyncHandler(async (req, res) => {
   })
 );
 
+//Get route to get all the books in database with pagination
 router.get("/",asyncHandler(async (req, res) => {
     if(req.query.home){
      currentPage = 1
