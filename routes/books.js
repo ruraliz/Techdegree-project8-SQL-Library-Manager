@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const Book = require('../models').Book;
+var { Op } = require("sequelize");
+
+let currentPage = 1;
+let searchTerm;
+const itemsPerPage = 10;
 
 function asyncHandler(cb){
   return async(req, res, next) => {
@@ -13,12 +18,77 @@ function asyncHandler(cb){
   }
 }
 
-/* GET books listing. */
-router.get('/', asyncHandler(async (req, res) => {
-  const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
-  // console.log( books.map(book => book.toJSON()) );
-  res.render("books/index", { books, title: "Sequelize-It!" });
-}));
+//search function 
+async function search(query) {
+  if(query){
+    searchTerm= query
+  }else{
+    searchTerm= searchTerm
+  }
+  return await Book.findAndCountAll({
+    where: {
+      [Op.or]: {
+        title: {
+          [Op.substring]: searchTerm,
+        },
+        author: {
+          [Op.substring]: searchTerm,
+        },
+        genre: {
+          [Op.substring]: searchTerm,
+        },
+        year: {
+          [Op.substring]: searchTerm,
+        },
+      },
+    },
+    offset: (currentPage - 1) * itemsPerPage,
+    limit: itemsPerPage,
+  });
+}
+//search form
+router.post("/search", asyncHandler(async (req, res) => {
+    currentPage = 1;
+    const books = await search(req.body.query);
+    const numOfPages = Math.ceil(books.count / itemsPerPage);
+    res.render("books/index", {books: books.rows, title: `${searchTerm}`, pages: numOfPages, currentPage, searchQ: true, searchTerm});
+  })
+);
+
+//GET ROUTE '/search'
+//Displays results from database search.
+
+
+router.get("/search",asyncHandler(async (req, res) => {
+    currentPage = req.query.page || currentPage;
+    const books = await search();
+    const numOfPages = Math.ceil(books.count / itemsPerPage);
+    res.render("books/index", {books: books.rows, title: `${searchTerm}`, pages: numOfPages, currentPage, searchQ: true, searchTerm});
+  })
+);
+
+router.get("/",asyncHandler(async (req, res) => {
+    if(req.query.home){
+     currentPage = 1
+    }else{
+      currentPage = req.query.page || currentPage
+    }
+    const books = await Book.findAndCountAll({
+      offset: (currentPage - 1) * itemsPerPage,
+      limit: itemsPerPage,
+      order: [["createdAt", "DESC"]] 
+    });
+    const numOfPages = Math.ceil(books.count / itemsPerPage);
+    if (!books.count) {
+      const err = new Error(`No books exist!`);
+      res.render("books/page-not-found", {
+        error: err,
+      });
+    } else {
+      res.render("books/index", { books: books.rows, title: "Library Database", pages: numOfPages, currentPage});
+    }
+  })
+);
 
 /* Create a new book form. */
 router.get('/new', (req, res) => {

@@ -39,11 +39,10 @@ app.use(function(req, res, next) {
 });
 
 app.use(function(err, req, res, next) {
-    // set locals, only providing error in development
     if (err.status === 404) {
       res.status(404).render('books/page-not-found', {err});
     } else {
-      err.message = err.message || 'Something went wrong';
+      err.message = err.message || 'Something went wrong on the server';
       res.status(err.status || 500).render('books/error', {err});
     }
   });

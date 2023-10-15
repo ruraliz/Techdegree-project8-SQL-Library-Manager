@@ -95,3 +95,25 @@ input[type=text] {
 .error {
   color: rgb(236, 15, 15);
 }
+
+.pag-buttons button {
+  padding: 6px;
+}
+
+.active {
+  background-color: #01b189;
+  color: black;
+  font-weight: bold;
+}
+
+.pag-buttons {
+  display: inline-block;
+  margin: 4px;
+}
+
+.pag-buttons-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}

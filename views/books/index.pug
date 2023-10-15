@@ -1,11 +1,56 @@
-extends layout 
-
+extends layout
 block content
-    each book in books  
-        book   
-            tr  
-                td
-                    a(href='/books/' + book.id)= book.title
-                td= book.author
-                td= book.genre
-                td= book.year
+    h1 Books
+    if searchQ
+        h2=`Results for... ${searchTerm}`
+        p 
+            a(href="/books?home=true") Home
+    else
+        p
+            a(href="/books/new") Create New Book
+
+    form(action="/books/search", method="post")
+
+        input(type="search" name="query" id="query" placeholder="Search...")
+    br
+    if books.length
+        table
+            thead
+                tr
+                    th Title
+                    th Author
+                    th Genre 
+                    th Year 
+            tbody       
+                each book in books
+                        tr
+                            td 
+                                a(href= `/books/${book.id}`) #{book.title}
+                            td #{book.author} 
+                            td #{book.genre} 
+                            td #{book.year}
+    else
+        div
+            h3 No results found from your search!
+    if searchQ
+        nav(class="pag-button")
+            form(action="/books/search", method="get")
+                - var p = 1;
+                ul(class="pag-buttons-list")
+                    while p <= pages 
+                        li(class="pag-buttons")
+                            if p == currentPage
+                                button(class="active" disabled="true")= p++
+                            else
+                                button(name="page" value=p)= p++
+    else                    
+        nav(class="pag-button")
+            form(action="books", method="get")
+                - var p = 1;
+                ul(class="pag-buttons-list")
+                    while p <= pages 
+                        li(class="pag-buttons")
+                            if p == currentPage
+                                button(class="active" disabled="true")= p++
+                            else
+                                button(name="page" value=p)= p++
