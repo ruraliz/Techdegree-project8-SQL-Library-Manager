@@ -1,11 +1,8 @@
 extends layout
 
-doctype html
-head
-  title Page Not Found
-  link(rel='stylesheet' href='/stylesheets/style.css')
-h1= err.status
-p Sorry! There was an unexpected error on the server.
-br
+block content
+  h1= error.message
+  h2= error.status
+  pre #{error.stack}
 p
   a.button(href='/books') Home
