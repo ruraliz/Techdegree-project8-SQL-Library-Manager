@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/books', booksRouter);
 
-// error handle
+// global error handler
 app.use(function(req, res, next) {
     res.status(404).render('books/page-not-found');
 });
