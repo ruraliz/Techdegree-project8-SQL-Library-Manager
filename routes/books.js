@@ -46,6 +46,28 @@ async function search(query) {
     limit: itemsPerPage,
   });
 }
+//Get route to get all the books in database with pagination
+router.get("/",asyncHandler(async (req, res) => {
+  if(req.query.home){
+   currentPage = 1
+  }else{
+    currentPage = req.query.page || currentPage
+  }
+  const books = await Book.findAndCountAll({
+    offset: (currentPage - 1) * itemsPerPage,
+    limit: itemsPerPage,
+    order: [["createdAt", "DESC"]] 
+  });
+  const numOfPages = Math.ceil(books.count / itemsPerPage);
+  if (!books.count) {
+    const err = new Error(`No books exist!`);
+    res.render("books/page-not-found", {error: err });
+  } else {
+    res.render("books/index", { books: books.rows, title: "Library Database", pages: numOfPages, currentPage});
+  }
+})
+);
+
 //search form
 router.post("/search", asyncHandler(async (req, res) => {
     currentPage = 1;
@@ -65,29 +87,6 @@ router.get("/search",asyncHandler(async (req, res) => {
   })
 );
 
-//Get route to get all the books in database with pagination
-router.get("/",asyncHandler(async (req, res) => {
-    if(req.query.home){
-     currentPage = 1
-    }else{
-      currentPage = req.query.page || currentPage
-    }
-    const books = await Book.findAndCountAll({
-      offset: (currentPage - 1) * itemsPerPage,
-      limit: itemsPerPage,
-      order: [["createdAt", "DESC"]] 
-    });
-    const numOfPages = Math.ceil(books.count / itemsPerPage);
-    if (!books.count) {
-      const err = new Error(`No books exist!`);
-      res.render("books/page-not-found", {
-        error: err,
-      });
-    } else {
-      res.render("books/index", { books: books.rows, title: "Library Database", pages: numOfPages, currentPage});
-    }
-  })
-);
 
 /* Create a new book form. */
 router.get('/new', (req, res) => {

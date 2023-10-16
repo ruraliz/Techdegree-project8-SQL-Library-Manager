@@ -1,7 +1,7 @@
 extends layout
 block content
-  h1= err.message
-  h2= err.status
-  pre #{err.stack}
-p
-  a.button(href='/books') Home &rarr;
+  h1= error.status
+  h2= error.message
+  pre #{error.stack}
+  p
+    a.button(href='/books') Home &rarr;

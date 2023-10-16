@@ -1,7 +1,7 @@
 extends layout 
 block content 
-   h1 Page Not Found 
-   p=`'${err.message}'`
-   br
+   h1= error.status
+   h2= error.message
+   pre #{error.stack}
    p 
-      a(className="button", href="/books") Home &rarr;
+     a.button(href='/books') Home &rarr;

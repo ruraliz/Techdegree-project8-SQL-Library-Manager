@@ -35,17 +35,18 @@ app.use('/', indexRouter);
 app.use('/books', booksRouter);
 
 // global error handler
-app.use(function(req, res, next) {
-    res.status(404).render('books/page-not-found');
-});
-
-app.use(function(err, req, res, next) {
-    if (err.status === 404) {
-      res.status(404).render('books/page-not-found', {err});
-    } else {
-      err.message = err.message || 'Something went wrong on the server';
-      res.status(err.status || 500).render('books/error', {err});
-    }
+app.use((req, res, next) => {
+    const error = new Error('Page Not Found')
+    error.status = 404;
+    res.status(404)
+    res.render('books/page-not-found', { error } );
+  });
+  
+  app.use((err, req, res, next) => {
+      err.status = err.status || 500
+      err.message = err.message || 'Internal Server Error';
+      res.status(err.status)
+      res.render('books/error', { error: err  })
   });
 
 module.exports = app;
